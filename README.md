@@ -24,6 +24,20 @@ Then you can viewer with http://localhost:8090 in your web browser.
 
 * View entities
 
+# Requirements
+
+Go 1.8.0 or later.
+
 # Next
 
 * Create entites
+
+# Build
+
+Use [dep](https://github.com/golang/dep) for vendoring.
+
+```
+dep ensure -update
+```
+
+Then you can build the project.
