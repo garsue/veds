@@ -20,16 +20,17 @@ veds localhost:8080
 
 Then you can viewer with http://localhost:8090 in your web browser.
 
-# Features
-
-* View entities
-
 # Requirements
 
 Go 1.8.0 or later.
 
+# Features
+
+Can not do anything!
+
 # Next
 
+* View entities
 * Create entites
 
 # Build
