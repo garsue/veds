@@ -16,8 +16,8 @@ type config struct {
 var cnf config
 
 func init() {
-	flag.StringVar(&cnf.dsHost, "datastore-host", "", "Datastore emulator host")
-	flag.StringVar(&cnf.projectID, "project-id", "", "Project ID")
+	flag.StringVar(&cnf.dsHost, "host", "", "Datastore emulator host")
+	flag.StringVar(&cnf.projectID, "id", "", "Project ID")
 }
 
 func main() {
@@ -26,6 +26,7 @@ func main() {
 	if err := start(cnf); err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Finish")
 }
 
 func start(cnf config) error {
@@ -40,6 +41,14 @@ func start(cnf config) error {
 		}
 	}()
 
-	log.Println(client)
+	query := datastore.NewQuery("__namespace__").KeysOnly()
+	keys, err := client.GetAll(ctx, query, nil)
+	if err != nil {
+		return err
+	}
+	for i, key := range keys {
+		log.Println(i, key.Name, key)
+	}
+
 	return nil
 }
