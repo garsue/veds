@@ -1,54 +1,26 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
+	"net/http"
 
-	"cloud.google.com/go/datastore"
+	"github.com/garsue/veds/application"
+	"github.com/garsue/veds/application/handler"
 )
 
-type config struct {
-	dsHost    string
-	projectID string
-}
-
-var cnf config
+var cnf = &application.Config{}
 
 func init() {
-	flag.StringVar(&cnf.dsHost, "host", "", "Datastore emulator host")
-	flag.StringVar(&cnf.projectID, "id", "", "Project ID")
+	flag.StringVar(&cnf.ProjectID, "p", "", "Project ID")
 }
 
 func main() {
-	flag.Parse()
-
-	if err := start(cnf); err != nil {
+	app, err := application.NewApp(cnf)
+	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Finish")
-}
 
-func start(cnf config) error {
-	ctx := context.Background()
-	client, err := datastore.NewClient(ctx, cnf.projectID)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Println(err)
-		}
-	}()
-
-	query := datastore.NewQuery("__namespace__").KeysOnly()
-	keys, err := client.GetAll(ctx, query, nil)
-	if err != nil {
-		return err
-	}
-	for i, key := range keys {
-		log.Println(i, key.Name, key)
-	}
-
-	return nil
+	mux := handler.NewHandler(app)
+	log.Fatal(http.ListenAndServe(":8090", mux))
 }
