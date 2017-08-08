@@ -31,6 +31,10 @@ func NewHandler(app *application.App) http.Handler {
 		r.Get("/", kinds(app))
 	})
 
+	r.With(vmiddleware.ContentTypeJSON).Route("/properties", func(r chi.Router) {
+		r.Get("/", properties(app))
+	})
+
 	return r
 }
 
@@ -61,6 +65,20 @@ func namespaces(app *application.App) http.HandlerFunc {
 func kinds(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		keys, err := service.Kinds(r.Context(), app)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err := json.NewEncoder(w).Encode(keys); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+}
+
+func properties(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		keys, err := service.Properties(r.Context(), app)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

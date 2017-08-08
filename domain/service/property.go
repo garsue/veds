@@ -9,8 +9,8 @@ import (
 	"github.com/garsue/veds/domain/repository"
 )
 
-// Kinds returns used kinds in datastore
-func Kinds(ctx context.Context, app *application.App) ([]string, error) {
+// Properties returns used properties in datastore
+func Properties(ctx context.Context, app *application.App) (map[string][]string, error) {
 	client, err := datastore.NewClient(ctx, app.Config.ProjectID)
 	if err != nil {
 		return nil, err
@@ -21,15 +21,16 @@ func Kinds(ctx context.Context, app *application.App) ([]string, error) {
 		}
 	}()
 
-	kinds, err := repository.Kinds(ctx, client)
+	properties, err := repository.Properties(ctx, client)
 	if err != nil {
 		return nil, err
 	}
 
-	var result []string
-	for _, kind := range kinds {
-		name := kind.Name
-		result = append(result, name)
+	result := make(map[string][]string)
+	for _, property := range properties {
+		kind := property.Parent.Name
+		name := property.Name
+		result[kind] = append(result[kind], name)
 	}
 	return result, nil
 }
