@@ -9,12 +9,8 @@ import (
 	"github.com/garsue/veds/domain/repository"
 )
 
-const (
-	defaultNamespaceDisplayName = "(default)"
-)
-
-// Namespaces returns used namespaces in datastore
-func Namespaces(ctx context.Context, app *application.App) ([]string, error) {
+// Kinds returns used keys in datastore
+func Kinds(ctx context.Context, app *application.App) ([]string, error) {
 	client, err := datastore.NewClient(ctx, app.Config.ProjectID)
 	if err != nil {
 		return nil, err
@@ -25,17 +21,14 @@ func Namespaces(ctx context.Context, app *application.App) ([]string, error) {
 		}
 	}()
 
-	keys, err := repository.Namespaces(ctx, client)
+	kinds, err := repository.Kinds(ctx, client)
 	if err != nil {
 		return nil, err
 	}
 
 	var result []string
-	for _, key := range keys {
-		name := key.Name
-		if name == "" {
-			name = defaultNamespaceDisplayName
-		}
+	for _, kind := range kinds {
+		name := kind.Name
 		result = append(result, name)
 	}
 	return result, nil
