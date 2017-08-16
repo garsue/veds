@@ -22,18 +22,7 @@ func NewHandler(app *application.App) http.Handler {
 
 	// Routes
 	r.Get("/", index(app))
-
-	r.With(vmiddleware.ContentTypeJSON).Route("/namespaces", func(r chi.Router) {
-		r.Get("/", namespaces(app))
-	})
-
-	r.With(vmiddleware.ContentTypeJSON).Route("/kinds", func(r chi.Router) {
-		r.Get("/", kinds(app))
-	})
-
-	r.With(vmiddleware.ContentTypeJSON).Route("/properties", func(r chi.Router) {
-		r.Get("/", properties(app))
-	})
+	r.With(vmiddleware.ContentTypeJSON).Get("/entities/{kind}", entities(app))
 
 	return r
 }
@@ -42,49 +31,22 @@ func index(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if _, err := fmt.Fprintln(w, `Veds
 
-* /namespaces`); err != nil {
+* /{kind}`); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}
 }
 
-func namespaces(app *application.App) http.HandlerFunc {
+func entities(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		namespaces, err := service.Namespaces(r.Context(), app)
+		kind := chi.URLParam(r, "kind")
+		entities, err := service.Entities(r.Context(), app, kind)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if err := json.NewEncoder(w).Encode(namespaces); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	}
-}
-
-func kinds(app *application.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		keys, err := service.Kinds(r.Context(), app)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if err := json.NewEncoder(w).Encode(keys); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	}
-}
-
-func properties(app *application.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		keys, err := service.Properties(r.Context(), app)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if err := json.NewEncoder(w).Encode(keys); err != nil {
+		if err := json.NewEncoder(w).Encode(entities); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}

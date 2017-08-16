@@ -5,12 +5,13 @@ import (
 	"log"
 
 	"cloud.google.com/go/datastore"
+
 	"github.com/garsue/veds/application"
 	"github.com/garsue/veds/domain/repository"
 )
 
-// Kinds returns used kinds in datastore
-func Kinds(ctx context.Context, app *application.App) ([]string, error) {
+// Entities returns entries associated with the kind
+func Entities(ctx context.Context, app *application.App, kind string) (map[string]interface{}, error) {
 	client, err := datastore.NewClient(ctx, app.Config.ProjectID)
 	if err != nil {
 		return nil, err
@@ -21,15 +22,14 @@ func Kinds(ctx context.Context, app *application.App) ([]string, error) {
 		}
 	}()
 
-	kinds, err := repository.Kinds(ctx, client)
+	keys, entities, err := repository.Entities(ctx, client, kind)
 	if err != nil {
 		return nil, err
 	}
 
-	var result []string
-	for _, kind := range kinds {
-		name := kind.Name
-		result = append(result, name)
+	result := make(map[string]interface{})
+	for i, key := range keys {
+		result[key.String()] = entities[i]
 	}
 	return result, nil
 }
