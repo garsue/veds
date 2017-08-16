@@ -12,7 +12,8 @@ import (
 var cnf = &application.Config{}
 
 func init() {
-	flag.StringVar(&cnf.ProjectID, "p", "", "Project ID")
+	flag.StringVar(&cnf.ProjectID, "id", "", "Project ID")
+	flag.StringVar(&cnf.Public, "public", "public", "Public directory name")
 }
 
 func main() {

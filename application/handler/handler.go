@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/garsue/veds/application"
@@ -21,19 +20,18 @@ func NewHandler(app *application.App) http.Handler {
 	r.Use(middleware.Recoverer)
 
 	// Routes
-	r.Get("/", index(app))
 	r.With(vmiddleware.ContentTypeJSON).Get("/entities/{kind}", entities(app))
+	r.Get("/*", index(app))
 
 	return r
 }
 
+// index returns the static file handler
 func index(app *application.App) http.HandlerFunc {
+	root := http.Dir(app.Config.Public)
+	fs := http.FileServer(root)
 	return func(w http.ResponseWriter, r *http.Request) {
-		if _, err := fmt.Fprintln(w, `Veds
-
-* /{kind}`); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		fs.ServeHTTP(w, r)
 	}
 }
 

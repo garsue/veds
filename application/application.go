@@ -13,6 +13,7 @@ const emulatorHostEnvVar = "DATASTORE_EMULATOR_HOST"
 // Config is configurations
 type Config struct {
 	ProjectID string
+	Public    string
 }
 
 // App is application globals
