@@ -8,6 +8,12 @@
   version = "v0.10.0"
 
 [[projects]]
+  name = "github.com/go-chi/chi"
+  packages = [".","middleware"]
+  revision = "25354a53cca531cb2efd3f1d3c565d90ff04d802"
+  version = "v3.1.5"
+
+[[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["proto","protoc-gen-go/descriptor","ptypes/any","ptypes/struct","ptypes/timestamp","ptypes/wrappers"]
@@ -58,6 +64,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9b1f1764530fff05739dad72ca28e8e1196c1c31b25b1d6bbaffe7bdacdfde3d"
+  inputs-digest = "ce2f4d97cabd763d8facf629a3712337b5af9d4d3a35e26a6012a21992f94976"
   solver-name = "gps-cdcl"
   solver-version = 1
