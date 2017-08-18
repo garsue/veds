@@ -1,3 +1,3 @@
 import Vue from 'vue'
 
-console.log('veds2', Vue)
+console.log('veds', Vue)

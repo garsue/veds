@@ -3,3 +3,4 @@ debug
 /vendor/
 veds
 node_modules
+/public/bundle.js
